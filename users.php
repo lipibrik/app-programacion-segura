@@ -16,7 +16,7 @@
 	
 	if (isset($_GET["borrar"])) {
 		if (!$ENLACE_DB = conectar()) {
-			irA("index.php?error=yes");
+			irA("index.php?error=1");
 		}
 		$id_borrar = $_GET["borrar"];
 		
