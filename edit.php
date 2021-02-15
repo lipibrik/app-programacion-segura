@@ -16,7 +16,7 @@
 	if (isset($_POST["id"]) && isset($_POST["nombre"]) && isset($_POST["apellidos"]) && isset($_POST["email"]) && isset($_POST["telefono"]) && isset($_POST["tipo_usuario"]) && isset($_POST["password"])) {
 		$id = $_POST["id"]; $nombre = $_POST["nombre"]; $apellidos = $_POST["apellidos"]; $email = $_POST["email"]; $telefono = $_POST["telefono"]; $tipo_usuario = $_POST["tipo_usuario"]; $password = $_POST["password"]; 
 		
-		if (!compbobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
+		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
 		
