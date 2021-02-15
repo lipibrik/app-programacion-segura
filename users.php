@@ -1,8 +1,15 @@
 <?php
 	include("sesiones.php");
+	include_once("functions.php");
 	
+	// Esta es una página privada, tenemos que comprobar si el usuario está logueado, y por lo tanto puede acceder a su contenido.
 	if (!isLoggedIn()) {
 		irA("index.php?error=2");
+	}
+	
+	// Intentamos la conexión con la base de datos, si falla, volvemos al index
+	if (!$enlace = conectarDB()) {
+		irA("index.php?error=yes");
 	}
 ?>
 <!DOCTYPE html>
@@ -11,37 +18,32 @@
 	<title>Listado de Usuarios</title>
 	
 <?php
-	include_once("conexion.php");
 	include("head.php");
 	
+	// Si se ha hecho clic en borrar alguno de los usuarios
 	if (isset($_GET["borrar"])) {
-		if (!$ENLACE_DB = conectar()) {
-			irA("index.php?error=2");
-		}
 		$id_borrar = $_GET["borrar"];
 		
 		$consulta = "DELETE FROM usuarios WHERE id = $id_borrar";
-		$resultado = mysqli_query($ENLACE_DB, $consulta);
-		
+		$resultado = mysqli_query($enlace, $consulta);
 	}
 ?>
 	
 </head>
 <body>
-	<?php if (isset($_GET["error"])) { ?>
-		<div th:if="${param.error}" class="alert alert-danger" role="alert">Se ha producido un error</div>
-	<?php } ?>
-	<?php if (isset($_GET["saved"])) { ?>
-		<div th:if="${param.error}" class="alert alert-success" role="alert">Se ha guardado con éxito</div>
-	<?php } ?>
+	<?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
+	<?php if (isset($_GET["saved"])) mostrarMensaje($_GET["saved"]); ?>
 	<div class="container">
 	<div class="mx-auto col-sm-8 main-section" id="myTab" role="tablist">
 		
 		<div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">	
 			<div class="card">
 				<div class="card-header">
-					<?php showHello(); ?>
-					<h4>Usuarios</h4>
+					<?php 
+						// Mostrar mensaje de saludo y para cerrar sesión
+						showHello(); 
+					?>
+					<h4>Listado de Usuarios</h4>
 				</div>
 				<div class="card-body">
 					<div class="table-responsive">
@@ -59,12 +61,9 @@
 							</thead>
 							<tbody>
 						<?php
-							if (!$ENLACE_DB = conectar()) {
-								irA("index.php?error=yes");
-							}
 							$tipos_de_usuarios = array("Alumno", "Profesor");
 							$consulta = "SELECT * FROM usuarios";
-							$resultado = mysqli_query($ENLACE_DB, $consulta);
+							$resultado = mysqli_query($enlace, $consulta);
 							while ($row = mysqli_fetch_array($resultado)) {
 						?>
 								<tr>

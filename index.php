@@ -1,10 +1,13 @@
 <?php
 	include("sesiones.php");
+	include_once("functions.php");
 	
+	// Se ha hecho clic en "Cerrar Sesión"
 	if (isset($_GET["logout"])) {
 		logout();
 	}
 	
+	// Si se ha introduccido usuario y contraseña en el formulario de login
 	if (isset($_POST["username"]) && isset($_POST["password"])) {
 		$username = $_POST["username"]; 
 		$password = $_POST["password"];
@@ -38,27 +41,22 @@
 				
 				<form class="col-12" action="index.php" method="post">
 					<div class="form-group" id="user-group">
-						<input type="text" class="form-control" placeholder="Nombre de usuario" name="username" required="required"/>
+						<input type="text" class="form-control" placeholder="Email" name="username" required="required"/>
 					</div>
 					<div class="form-group" id="contrasena-group">
-						<input type="password" class="form-control" placeholder="Contrasena" name="password" required="required"/>
+						<input type="password" class="form-control" placeholder="Contraseña" name="password" required="required"/>
 					</div>
 					<button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>  Entrar </button>
 				</form>
 				
 				<div class="col-12 forgot">
-					<a href="recordar.php">¿Recordar contrasena?</a>
+					¿Has olvidado tu contraseña?<br/><a href="recordar.php">Recordar contraseña</a>.
+				</div>
+				<div class="col-12 forgot">
+					¿Todavía no estás registrado?<br/><a href="recordar.php">Registrarse</a>.
 				</div>
 				
-				<?php if (isset($_GET["error"]) && $_GET["error"] == 1) { ?>
-					<div th:if="${param.error}" class="alert alert-danger" role="alert">Usuario y/o contraseña incorrectos</div>
-				<?php } ?>
-				<?php if (isset($_GET["error"]) && $_GET["error"] == 2) { ?>
-					<div th:if="${param.error}" class="alert alert-danger" role="alert">No estás logueado</div>
-				<?php } ?>
-				<?php if (isset($_GET["error"]) && $_GET["error"] == "yes") { ?>
-					<div th:if="${param.error}" class="alert alert-danger" role="alert">Se ha producido un error desconocido, contacte con el administrador.</div>
-				<?php } ?>
+				<?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
 				
 			</div>
 		</div>

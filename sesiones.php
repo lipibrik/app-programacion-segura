@@ -1,9 +1,9 @@
 <?php
 	session_start();
-	include_once("conexion.php");
+	include_once("functions.php");
 	
 	function login($usuario, $password) {
-		if (!$enlace = conectar()) return false;
+		if (!$enlace = conectarDB()) return false;
 		$consulta = "SELECT * FROM usuarios WHERE email = '$usuario' AND contrasena = '$password'";
 		$resultado = mysqli_query($enlace, $consulta);
 		$row = mysqli_fetch_array($resultado);
