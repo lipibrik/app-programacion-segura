@@ -15,34 +15,41 @@
 	}
 	
 	function mostrarError($codigo_error) {
-		switch ($codigo_error) {
-			case 1:
-				echo "<div class='alert alert-danger' role='alert'>Usuario y/o contraseña incorrectos</div>";
-			break;
-			case 2:
-				echo "<div class='alert alert-danger' role='alert'>No estás logueado</div>";
-			break;
-			case 3:
-				echo "<div class='alert alert-danger' role='alert'>Fallo al guardar cambios</div>";
-			break;
-			case 4:
-				echo "<div class='alert alert-danger' role='alert'>Debe indicarse un usuario que exista para editar</div>";
-			break;
-			default:
-				echo "<div class='alert alert-danger' role='alert'>Se ha producido un error desconocido. Contacte con el administrador</div>";
-			break;
+		if (in_array($codigo_error, array("1", "2", "3", "4"))) {
+			$codigo_error = htmlspecialchars($codigo_error);
+			echo "<div class='alert alert-danger' role='alert'>Error $codigo_error: ";
+			switch ($codigo_error) {
+				case 1:
+					echo "Usuario y/o contraseña incorrectos";
+				break;
+				case 2:
+					echo "No estás logueado";
+				break;
+				case 3:
+					echo "Fallo al guardar cambios";
+				break;
+				case 4:
+					echo "Debe indicarse un usuario que exista para editar";
+				break;
+				default:
+					echo "Se ha producido un error desconocido. Contacte con el administrador";
+				break;
+			}
+			echo "</div>";
 		}
 	}
 	
 	function mostrarMensaje($codigo_mensaje) {
+		echo "<div class='alert alert-success' role='alert'>";
 		switch ($codigo_mensaje) {
 			case 1:
-				echo "<div class='alert alert-success' role='alert'>Se ha guardado con éxito</div>";
+				echo "Se ha guardado con éxito";
 			break;			
 			default:
-				echo "<div class='alert alert-success' role='alert'>Acción realizada</div>";
+				echo "Acción realizada";
 			break;
 		}
+		echo "</div>";
 	}
 	
 	function compbobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password) {

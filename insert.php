@@ -15,7 +15,7 @@
 			irA("users.php?error=yes");
 		}
 		
-		$nombre = $_POST["nombre"]; $apellidos = $_POST["apellidos"]; $email = $_POST["email"]; $telefono = $_POST["telefono"]; $tipo_usuario = $_POST["tipo_usuario"]; $password = $_POST["password"]; 
+		$nombre = htmlspecialchars($_POST["nombre"]); $apellidos = htmlspecialchars($_POST["apellidos"]); $email = htmlspecialchars($_POST["email"]); $telefono = htmlspecialchars($_POST["telefono"]); $tipo_usuario = htmlspecialchars($_POST["tipo_usuario"]); $password = htmlspecialchars($_POST["password"]); 
 		if (!compbobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
