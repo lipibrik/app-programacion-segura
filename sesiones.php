@@ -3,6 +3,8 @@
 	include_once("functions.php");
 	
 	function login($usuario, $password) {
+        $usuario = limpiar($usuario);
+        $password = limpiar($password);
 		if (!$enlace = conectarDB()) return false;
 		$consulta = "SELECT * FROM usuarios WHERE email = '$usuario' AND contrasena = '$password'";
 		$resultado = mysqli_query($enlace, $consulta);

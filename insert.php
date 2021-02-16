@@ -15,11 +15,21 @@
 			irA("users.php?error=yes");
 		}
 		
-		$nombre = htmlspecialchars($_POST["nombre"]); $apellidos = htmlspecialchars($_POST["apellidos"]); $email = htmlspecialchars($_POST["email"]); $telefono = htmlspecialchars($_POST["telefono"]); $tipo_usuario = htmlspecialchars($_POST["tipo_usuario"]); $password = htmlspecialchars($_POST["password"]); 
+		$nombre = limpiar($_POST["nombre"]); 
+        $apellidos = limpiar($_POST["apellidos"]); 
+        $email = limpiar($_POST["email"]); 
+        $telefono = limpiar($_POST["telefono"]); 
+        $tipo_usuario = limpiar($_POST["tipo_usuario"]); 
+        $password = limpiar($_POST["password"]); 
 		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
-		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password')";
+        if (!$ruta_foto = comprobarFoto($_FILES)) {
+            $ruta_foto = "";
+        }
+		
+		
+		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena, imagen) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password', '$ruta_foto')";
 		
 		if ($resultado = mysqli_query($enlace, $consulta)) {
 			irA("users.php?saved=1");
@@ -47,7 +57,13 @@
 				<h4>Datos del Usuario</h4>
 			</div>
 			<div class="card-body">
-				<form class="form" role="form" autocomplete="off" method="post">
+				<form class="form" role="form" autocomplete="off" method="post" enctype="multipart/form-data">
+					<div class="form-group row">
+						<label class="col-lg-3 col-form-label form-control-label">Imagen</label>
+						<div class="col-lg-9">
+							<input type="file" class="form-control" name="foto" accept=".gif,.jpg,.png" />
+						</div>
+					</div>
 					<div class="form-group row">
 						<label class="col-lg-3 col-form-label form-control-label">Nombre</label>
 						<div class="col-lg-9">
@@ -94,6 +110,5 @@
 			</div>
 		</div>
 	</div>
-</div>
 </body>
 </html>

@@ -22,9 +22,9 @@
 	
 	// Si se ha hecho clic en borrar alguno de los usuarios
 	if (isset($_GET["borrar"])) {
-		$id_borrar = $_GET["borrar"];
+		$id_borrar = limpiar($_GET["borrar"]);
 		
-		$consulta = "DELETE FROM usuarios WHERE id = $id_borrar";
+		$consulta = "DELETE FROM usuarios WHERE id = '$id_borrar'";
 		$resultado = mysqli_query($enlace, $consulta);
 	}
 ?>
@@ -74,7 +74,9 @@
 									<td><?php echo $row["telefono"]; ?></td>
 									<td><?php echo $tipos_de_usuarios[$row["tipo_usuario"]]; ?></td>
 									<td>
-										<a href="edit.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-edit"></i></a> | <a href="users.php?borrar=<?php echo $row["id"]; ?>"><i class="fas fa-user-times"></i></a>
+										<a href="edit.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-edit"></i></a> |
+										<a href="users.php?borrar=<?php echo $row["id"]; ?>"><i class="fas fa-user-times"></i></a>|
+										<a href="ver.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-eye"></i></a>
 									</td>
 								</tr>
 						<?php

@@ -1,6 +1,5 @@
 <?php
 	include("sesiones.php");
-	include_once("functions.php");
 	
 	// Se ha hecho clic en "Cerrar Sesión"
 	if (isset($_GET["logout"])) {
@@ -9,8 +8,8 @@
 	
 	// Si se ha introduccido usuario y contraseña en el formulario de login
 	if (isset($_POST["username"]) && isset($_POST["password"])) {
-		$username = $_POST["username"]; 
-		$password = $_POST["password"];
+		$username = limpiar($_POST["username"]);
+		$password = limpiar($_POST["password"]);
 		
 		// Lógica de control de acceso
 		if (!login($username, $password)) {
