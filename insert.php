@@ -19,7 +19,28 @@
 		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
-		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password')";
+		if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+			$fileTmpPath = $_FILES['foto']['tmp_name'];
+			$fileName = $_FILES['foto']['name'];
+			$fileSize = $_FILES['foto']['size'];
+			$fileType = $_FILES['foto']['type'];
+			
+			$fileNameCmps = explode(".", $fileName);
+			$fileExtension = strtolower(end($fileNameCmps));
+			$newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+			$ruta_foto = $_FILES['foto']['tmp_name'];
+			$uploadFileDir = './uploaded_files/';
+			$dest_path = $uploadFileDir . $newFileName;
+			if(move_uploaded_file($fileTmpPath, $dest_path)) {
+			  $ruta_foto = $dest_path;
+			} else {
+				$ruta_foto = "";
+			}
+		} else {
+			$ruta_foto = "";
+		}
+		echo $ruta_foto;
+		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena, imagen) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password', '$ruta_foto')";
 		
 		if ($resultado = mysqli_query($enlace, $consulta)) {
 			irA("users.php?saved=1");
@@ -47,7 +68,13 @@
 				<h4>Datos del Usuario</h4>
 			</div>
 			<div class="card-body">
-				<form class="form" role="form" autocomplete="off" method="post">
+				<form class="form" role="form" autocomplete="off" method="post" enctype="multipart/form-data">
+					<div class="form-group row">
+						<label class="col-lg-3 col-form-label form-control-label">Imagen</label>
+						<div class="col-lg-9">
+							<input type="file" class="form-control" name="foto" />
+						</div>
+					</div>
 					<div class="form-group row">
 						<label class="col-lg-3 col-form-label form-control-label">Nombre</label>
 						<div class="col-lg-9">

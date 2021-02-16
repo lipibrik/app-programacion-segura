@@ -74,7 +74,9 @@
 									<td><?php echo $row["telefono"]; ?></td>
 									<td><?php echo $tipos_de_usuarios[$row["tipo_usuario"]]; ?></td>
 									<td>
-										<a href="edit.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-edit"></i></a> | <a href="users.php?borrar=<?php echo $row["id"]; ?>"><i class="fas fa-user-times"></i></a>
+										<a href="edit.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-edit"></i></a> |
+										<a href="users.php?borrar=<?php echo $row["id"]; ?>"><i class="fas fa-user-times"></i></a>|
+										<a href="ver.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-eye"></i>
 									</td>
 								</tr>
 						<?php
