@@ -15,31 +15,20 @@
 			irA("users.php?error=yes");
 		}
 		
-		$nombre = htmlspecialchars($_POST["nombre"]); $apellidos = htmlspecialchars($_POST["apellidos"]); $email = htmlspecialchars($_POST["email"]); $telefono = htmlspecialchars($_POST["telefono"]); $tipo_usuario = htmlspecialchars($_POST["tipo_usuario"]); $password = htmlspecialchars($_POST["password"]); 
+		$nombre = limpiar($_POST["nombre"]); 
+        $apellidos = limpiar($_POST["apellidos"]); 
+        $email = limpiar($_POST["email"]); 
+        $telefono = limpiar($_POST["telefono"]); 
+        $tipo_usuario = limpiar($_POST["tipo_usuario"]); 
+        $password = limpiar($_POST["password"]); 
 		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
-		if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-			$fileTmpPath = $_FILES['foto']['tmp_name'];
-			$fileName = $_FILES['foto']['name'];
-			$fileSize = $_FILES['foto']['size'];
-			$fileType = $_FILES['foto']['type'];
-			
-			$fileNameCmps = explode(".", $fileName);
-			$fileExtension = strtolower(end($fileNameCmps));
-			$newFileName = md5(time() . $fileName) . '.' . $fileExtension;
-			$ruta_foto = $_FILES['foto']['tmp_name'];
-			$uploadFileDir = './uploaded_files/';
-			$dest_path = $uploadFileDir . $newFileName;
-			if(move_uploaded_file($fileTmpPath, $dest_path)) {
-			  $ruta_foto = $dest_path;
-			} else {
-				$ruta_foto = "";
-			}
-		} else {
-			$ruta_foto = "";
-		}
-		echo $ruta_foto;
+        if (!$ruta_foto = comprobarFoto($_FILES)) {
+            $ruta_foto = "";
+        }
+		
+		
 		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena, imagen) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password', '$ruta_foto')";
 		
 		if ($resultado = mysqli_query($enlace, $consulta)) {
@@ -72,7 +61,7 @@
 					<div class="form-group row">
 						<label class="col-lg-3 col-form-label form-control-label">Imagen</label>
 						<div class="col-lg-9">
-							<input type="file" class="form-control" name="foto" />
+							<input type="file" class="form-control" name="foto" accept=".gif,.jpg,.png" />
 						</div>
 					</div>
 					<div class="form-group row">
@@ -121,6 +110,5 @@
 			</div>
 		</div>
 	</div>
-</div>
 </body>
 </html>

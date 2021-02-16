@@ -14,13 +14,19 @@
 	
 	// Si se han introducido los datos en el formulario y se ha dado a guardar
 	if (isset($_POST["id"]) && isset($_POST["nombre"]) && isset($_POST["apellidos"]) && isset($_POST["email"]) && isset($_POST["telefono"]) && isset($_POST["tipo_usuario"]) && isset($_POST["password"])) {
-		$id = htmlspecialchars($_POST["id"]); $nombre = htmlspecialchars($_POST["nombre"]); $apellidos = htmlspecialchars($_POST["apellidos"]); $email = htmlspecialchars($_POST["email"]); $telefono = htmlspecialchars($_POST["telefono"]); $tipo_usuario = htmlspecialchars($_POST["tipo_usuario"]); $password = htmlspecialchars($_POST["password"]); 
+		$id = limpiar($_POST["id"]); 
+        $nombre = limpiar($_POST["nombre"]); 
+        $apellidos = limpiar($_POST["apellidos"]);
+        $email = limpiar($_POST["email"]);
+        $telefono = limpiar($_POST["telefono"]);
+        $tipo_usuario = limpiar($_POST["tipo_usuario"]);
+        $password = limpiar($_POST["password"]); 
 		
 		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
 		
-		$consulta = "UPDATE usuarios SET nombre = '$nombre', apellidos = '$apellidos', email = '$email', telefono = '$telefono', tipo_usuario = '$tipo_usuario', contrasena = '$password' WHERE id = $id";
+		$consulta = "UPDATE usuarios SET nombre = '$nombre', apellidos = '$apellidos', email = '$email', telefono = '$telefono', tipo_usuario = '$tipo_usuario', contrasena = '$password' WHERE id = '$id'";
 		if ($resultado = mysqli_query($enlace, $consulta)) {
 			irA("users.php?saved=1");
 		} else {
@@ -34,9 +40,9 @@
 	}
 	
 	// En otro caso...
-	$id = $_GET["id"];
+	$id = limpiar($_GET["id"]);
 	$tipos_de_usuarios = array("Alumno", "Profesor");
-	$consulta = "SELECT * FROM usuarios WHERE id = $id";
+	$consulta = "SELECT * FROM usuarios WHERE id = '$id'";
 	$resultado = mysqli_query($enlace, $consulta);
 	if (!$row = mysqli_fetch_array($resultado)) {
 		irA("users.php?error=4");
@@ -109,6 +115,5 @@
 			</div>
 		</div>
 	</div>
-</div>
 </body>
 </html>
