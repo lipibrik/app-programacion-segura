@@ -16,7 +16,7 @@
 		}
 		
 		$nombre = htmlspecialchars($_POST["nombre"]); $apellidos = htmlspecialchars($_POST["apellidos"]); $email = htmlspecialchars($_POST["email"]); $telefono = htmlspecialchars($_POST["telefono"]); $tipo_usuario = htmlspecialchars($_POST["tipo_usuario"]); $password = htmlspecialchars($_POST["password"]); 
-		if (!compbobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
+		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
 		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password')";
