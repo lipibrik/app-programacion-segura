@@ -24,22 +24,30 @@
 		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
-        if (!$ruta_foto = comprobarFoto($_FILES)) {
+        if($_FILES["foto"]["name"] == "") {
             $ruta_foto = "";
+        } else {
+            $ruta_foto = comprobarFoto($_FILES);
         }
-		
-		
-		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena, imagen) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password', '$ruta_foto')";
-		
-		if ($resultado = mysqli_query($enlace, $consulta)) {
-			if ($ruta_foto != "") {
-				irA("users.php?saved=1");
-			} else {
-				irA("users.php?error=6");
-			}
-		} else {
-			irA("users.php?error=3");
-		}
+        if (repetido_n("email", $email, $enlace)) {
+            irA("insert.php?error=7");
+        } else {
+            if ($ruta_foto !== false) {
+                $consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena, imagen) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password', '$ruta_foto')";
+                if ($resultado = mysqli_query($enlace, $consulta)) {
+                    irA("users.php?saved=1");
+                } else {
+                    irA("insert.php?error=3");
+                }                  
+            } else {
+                $consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena, imagen) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password', '')";
+                if ($resultado = mysqli_query($enlace, $consulta)) {
+                    irA("insert.php?error=6");
+                } else {
+                    irA("insert.php?error=3");
+                }                
+            }  
+        }
 	}
 
 ?>
@@ -54,6 +62,7 @@
 
 </head>
 <body>
+    <?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
 	<div class="container">
 		<div class="card">
 			<div class="card-header">

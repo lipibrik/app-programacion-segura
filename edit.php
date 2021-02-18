@@ -25,14 +25,30 @@
 		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}
-		
-		$consulta = "UPDATE usuarios SET nombre = '$nombre', apellidos = '$apellidos', email = '$email', telefono = '$telefono', tipo_usuario = '$tipo_usuario', contrasena = '$password' WHERE id = '$id'";
-		if ($resultado = mysqli_query($enlace, $consulta)) {
-			irA("users.php?saved=1");
-		} else {
-			irA("users.php?error=3");
-		}
+        if($_FILES["foto"]["name"] == "") {
+            $ruta_foto = "";
+        } else {
+            $ruta_foto = comprobarFoto($_FILES);
+        }
+        
+        if ($ruta_foto !== false && $ruta_foto !== "") {
+            $consulta = "UPDATE usuarios SET nombre = '$nombre', apellidos = '$apellidos', email = '$email', telefono = '$telefono', tipo_usuario = '$tipo_usuario', contrasena = '$password', imagen='$ruta_foto' WHERE id = '$id'";
+            if ($resultado = mysqli_query($enlace, $consulta)) {
+                irA("users.php?saved=1");
+            } else {
+                irA("edit.php?error=3");
+            }                 
+        } else {
+            $consulta = "UPDATE usuarios SET nombre = '$nombre', apellidos = '$apellidos', email = '$email', telefono = '$telefono', tipo_usuario = '$tipo_usuario', contrasena = '$password' WHERE id = '$id'";
+            if ($resultado = mysqli_query($enlace, $consulta)) {
+                irA("users.php?saved=1");
+            } else {
+                irA("edit.php?error=3");
+            }               
+        }  
+        
 	}
+
 	
 	// Si no se psasa un id de usuario
 	if (!isset($_GET["id"])) {
@@ -47,6 +63,11 @@
 	if (!$row = mysqli_fetch_array($resultado)) {
 		irA("users.php?error=4");
 	}
+    if ($row["imagen"] == "") {
+		$imagen = "static/img/user.png";
+	} else {
+		$imagen = $row["imagen"];
+	}
 
 ?>
 <!DOCTYPE html>
@@ -60,6 +81,7 @@
 
 </head>
 <body>
+    <?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
 	<div class="container">
 		<div class="card">
 			<div class="card-header">
@@ -67,9 +89,16 @@
 				<h4>Datos del Usuario</h4>
 			</div>
 			<div class="card-body">
-				<form class="form" role="form" autocomplete="off" method="post">
+                <center><img width="200" src="<?php echo $imagen; ?>" title="<?php echo $row["nombre"] ?>" alt="<?php echo $row["nombre"] ?>" /></center>
+				<form class="form" role="form" autocomplete="off" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="id" value='<?php echo $row["id"] ?>' />
 					<div class="form-group row">
+						<label class="col-lg-3 col-form-label form-control-label">Imagen</label>
+						<div class="col-lg-9">
+							<input type="file" class="form-control" name="foto" accept=".gif,.jpg,.png" />
+						</div>
+					</div>
+                    <div class="form-group row">
 						<label class="col-lg-3 col-form-label form-control-label">Nombre</label>
 						<div class="col-lg-9">
 							<input type="text" class="form-control" placeholder="John" name="nombre" required="required" maxlength="25" value='<?php echo $row["nombre"] ?>'  />

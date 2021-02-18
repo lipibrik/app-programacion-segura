@@ -5,6 +5,10 @@
 	if (isset($_GET["logout"])) {
 		logout();
 	}
+    
+    if (isLoggedIn()) {
+		irA("users.php?error=8");
+	}
 	
 	// Si se ha introduccido usuario y contraseña en el formulario de login
 	if (isset($_POST["username"]) && isset($_POST["password"])) {

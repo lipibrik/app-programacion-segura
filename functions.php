@@ -15,7 +15,7 @@
 	}
 	
 	function mostrarError($codigo_error) {
-		if (in_array($codigo_error, array("1", "2", "3", "4", "5", "6"))) {
+		if (in_array($codigo_error, array("1", "2", "3", "4", "5", "6", "7", "8"))) {
 			$codigo_error = limpiar($codigo_error);
 			echo "<div class='alert alert-danger' role='alert'>Error $codigo_error: ";
 			switch ($codigo_error) {
@@ -36,6 +36,12 @@
 				break;
 				case 6:
 					echo "El registro se ha guardado, pero ha ocurrido un error al guardar la foto y no ha podido ser almacenada";
+				break;
+                case 7:
+					echo "Ya existe un usuario con ese email";
+				break;
+                case 8:
+					echo "Ya estás logueado";
 				break;
 				default:
 					echo "Se ha producido un error desconocido. Contacte con el administrador";
@@ -107,5 +113,21 @@
 		$enlace = conectarDB();
 		return mysqli_real_escape_string($enlace, htmlspecialchars($variable));
 	}
+
+    function repetido_n($columna, $valor, $conex) {
+        $rep = false;
+        $consulta = "SELECT * FROM usuarios WHERE " . $columna . " = '" . $valor . "'";
+        if($resultado = mysqli_query($conex,$consulta)) {
+            if(mysqli_num_rows($resultado) > 0) {
+                $rep = true;
+                mysqli_free_result($resultado);
+            }
+        } else {
+            $error="Imposible realizar la consulta. Error número: ".mysqli_errno($conex). ":".mysqli_error($conex);
+            mysqli_close($conex);
+            die($error);	
+        }
+        return $rep;
+    }
 
 ?>
