@@ -36,7 +36,8 @@ INSERT INTO `usuarios` (`id`, `nombre`, `apellidos`, `email`, `telefono`, `contr
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
