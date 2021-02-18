@@ -95,7 +95,7 @@
 				if (!file_exists($uploadFileDir) && !is_dir($uploadFileDir)) {
 					mkdir($uploadFileDir);	   
 				}
-				$dest_path = $uploadFileDir . $newFileName;
+				$dest_path = $uploadFileDir . "/" . $newFileName;
 				if(move_uploaded_file($fileTmpPath, $dest_path)) {
 				  return $dest_path;
 				} else {
