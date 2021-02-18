@@ -15,7 +15,7 @@
 	}
 	
 	function mostrarError($codigo_error) {
-		if (in_array($codigo_error, array("1", "2", "3", "4", "5"))) {
+		if (in_array($codigo_error, array("1", "2", "3", "4", "5", "6"))) {
 			$codigo_error = limpiar($codigo_error);
 			echo "<div class='alert alert-danger' role='alert'>Error $codigo_error: ";
 			switch ($codigo_error) {
@@ -31,8 +31,11 @@
 				case 4:
 					echo "Debe indicarse un usuario que exista para editar";
 				break;
-                case 5:
+				case 5:
 					echo "Ha ocurrido un error al subir la foto";
+				break;
+				case 6:
+					echo "El registro se ha guardado, pero ha ocurrido un error al guardar la foto y no ha podido ser almacenada";
 				break;
 				default:
 					echo "Se ha producido un error desconocido. Contacte con el administrador";
@@ -43,18 +46,18 @@
 	}
 	
 	function mostrarMensaje($codigo_mensaje) {
-        if (in_array($codigo_mensaje, array("1"))) {
-            echo "<div class='alert alert-success' role='alert'>";
-            switch ($codigo_mensaje) {
-                case 1:
-                    echo "Se ha guardado con éxito";
-                break;			
-                default:
-                    echo "Acción realizada";
-                break;
-            }
-            echo "</div>";
-        }
+		if (in_array($codigo_mensaje, array("1"))) {
+			echo "<div class='alert alert-success' role='alert'>";
+			switch ($codigo_mensaje) {
+				case 1:
+					echo "Se ha guardado con éxito";
+				break;			
+				default:
+					echo "Acción realizada";
+				break;
+			}
+			echo "</div>";
+		}
 	}
 	
 	function comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password) {
@@ -69,8 +72,8 @@
 		}
 	}
 
-    function comprobarFoto($foto) {
-        if (isset($foto['foto']) && $foto['foto']['error'] === UPLOAD_ERR_OK) {
+	function comprobarFoto($foto) {
+		if (isset($foto['foto']) && $foto['foto']['error'] === UPLOAD_ERR_OK) {
 			$fileTmpPath = $foto['foto']['tmp_name'];
 			$fileName = $foto['foto']['name'];
 			$fileSize = $foto['foto']['size'];
@@ -78,28 +81,31 @@
 			
 			$fileNameCmps = explode(".", $fileName);
 			$fileExtension = strtolower(end($fileNameCmps));
-            $allowedfileExtensions = array('jpg', 'gif', 'png');
-            if (in_array($fileExtension, $allowedfileExtensions)) {
-                $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
-                $ruta_foto = $foto['foto']['tmp_name'];
-                $uploadFileDir = './uploaded_files/';
-                $dest_path = $uploadFileDir . $newFileName;
-                if(move_uploaded_file($fileTmpPath, $dest_path)) {
-                  return $dest_path;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+			$allowedfileExtensions = array('jpg', 'gif', 'png', 'jpeg');
+			if (in_array($fileExtension, $allowedfileExtensions)) {
+				$newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+				$ruta_foto = $foto['foto']['tmp_name'];
+				$uploadFileDir = './uploaded_files';
+				if (!file_exists($uploadFileDir) && !is_dir($uploadFileDir)) {
+					mkdir($uploadFileDir);	   
+				}
+				$dest_path = $uploadFileDir . $newFileName;
+				if(move_uploaded_file($fileTmpPath, $dest_path)) {
+				  return $dest_path;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
-    }
+	}
 
-    function limpiar($variable) {
-        $enlace = conectarDB();
-        return mysqli_real_escape_string($enlace, htmlspecialchars($variable));
-    }
+	function limpiar($variable) {
+		$enlace = conectarDB();
+		return mysqli_real_escape_string($enlace, htmlspecialchars($variable));
+	}
 
 ?>

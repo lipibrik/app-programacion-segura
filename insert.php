@@ -32,7 +32,11 @@
 		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, tipo_usuario, contrasena, imagen) VALUES ('$nombre', '$apellidos', '$email', '$telefono', '$tipo_usuario','$password', '$ruta_foto')";
 		
 		if ($resultado = mysqli_query($enlace, $consulta)) {
-			irA("users.php?saved=1");
+			if ($ruta_foto != "") {
+				irA("users.php?saved=1");
+			} else {
+				irA("users.php?error=6");
+			}
 		} else {
 			irA("users.php?error=3");
 		}
