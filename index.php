@@ -12,11 +12,12 @@
 	
 	// Si se ha introduccido usuario y contraseña en el formulario de login
 	if (isset($_POST["username"]) && isset($_POST["password"])) {
+        $keep_logged_in = isset($_POST["keep_logged_in"]);
 		$username = limpiar($_POST["username"]);
 		$password = limpiar($_POST["password"]);
 		
 		// Lógica de control de acceso
-		if (!login($username, $password)) {
+		if (!login($username, $password, $keep_logged_in)) {
 			irA("index.php?error=1");
 		} else {
 			irA("users.php");
@@ -49,6 +50,7 @@
 					<div class="form-group" id="contrasena-group">
 						<input type="password" class="form-control" placeholder="Contraseña" name="password" required="required"/>
 					</div>
+                    <label><input type="checkbox" id="keep_logged_in" name="keep_logged_in" value="keep_logged_in"> Mantener abierta</label>
 					<button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>  Entrar </button>
 				</form>
 				
