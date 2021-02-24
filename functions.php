@@ -2,7 +2,7 @@
 	include("config.php");
 	
 	function conectarDB() {
-		return $ENLACE_DB = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_DB);
+		return $ENLACE_DB = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_DB);
 	}
 	
 	function irA($pagina) {

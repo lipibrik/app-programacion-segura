@@ -47,40 +47,6 @@
 		return isThereValidSession() || isThereValidCookie();
 	}
 	
-	// Para que una cookie sea válida, deberá existir la cookie y tener un valor válido almacenado en nuestro sistema
-	function isThereValidCookie() {
-		// Primera comprobación: ¿Existe la cookie rememberme?
-		if (isset($_COOKIE['rememberme'])) {
-			
-			// Limpiamos la cookie de posible inyección de código
-			$cookie = limpiar($_COOKIE['rememberme']);
-			
-			// Comprobamos si tenemos en nuestra base de datos un usuario con esa cookie
-			if (!$enlace = conectarDB()) return false;
-			$consulta = "SELECT * FROM usuario_cookie WHERE cookie = '$cookie'";
-			$resultado = mysqli_query($enlace, $consulta);
-			$row = mysqli_fetch_array($resultado);
-			
-			// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de cookies
-			if (mysqli_num_rows($resultado) == 1) {
-				
-				// Consultamos los datos de ese usuario para crear la sesión
-				$consulta = "SELECT * FROM usuarios WHERE id = '" . $row["id_usuario"] . "'";
-				$resultado = mysqli_query($enlace, $consulta);
-				$row_usuario = mysqli_fetch_array($resultado);
-				
-				// Creamos las variables de sesión, que darán acceso a las partes protegidas del sistema
-				createValidSession($row["id_usuario"], $row_usuario["nombre"]);
-				
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-	
 	// Para que una sesión sea válida, deberá haberse llamado a la función CreateValidSession y por lo tanto las variables de sesión creadas ahí, deben tener un valor válido
 	function isThereValidSession() {		
 		// Primera comprobación: ¿Existen las variables de sesión?
@@ -95,9 +61,8 @@
 			} else {
 				
 				// Tercera comprobación: calcular el tiempo de vida de la sesión (TTL = Time To Live)
-				$inactividad = 60 * 10;
 				$sessionTTL = time() - $_SESSION["timeout"];
-				if($sessionTTL > $inactividad){
+				if($sessionTTL > SESSION_TIME_ALIVE){
 					// Cerramos la sesión
 					logout();	
 					return false;
@@ -111,7 +76,50 @@
 			return false;
 		}
 	}
-	
+
+	// Para que una cookie sea válida, deberá existir la cookie y tener un valor válido almacenado en nuestro sistema
+	function isThereValidCookie() {
+		// Primera comprobación: ¿Existe la cookie rememberme?
+		if (isset($_COOKIE['rememberme'])) {
+			
+			// Limpiamos la cookie de posible inyección de código
+			$cookie = limpiar($_COOKIE['rememberme']);
+			
+			// Separamos los valores de la cookie
+			list($token, $tokenForUserInformation, $time) = explode(":", $cookie);
+			
+			// Segunda comprobación: la información del usuario (navegador e IP) coinciden con la del usuario cuando se creó la cookie, y que está dentro del tiempo de validez de las cookies
+			if (generateTokenForUserInformation() == $tokenForUserInformation && time() < ($time + COOKIE_TIME_ALIVE)) {
+				
+				// Tercera comprobación: Comprobamos si tenemos en nuestra base de datos un usuario con esa cookie
+				if (!$enlace = conectarDB()) return false;
+				$consulta = "SELECT * FROM usuario_cookie WHERE cookie = '$cookie'";
+				$resultado = mysqli_query($enlace, $consulta);
+				$row = mysqli_fetch_array($resultado);
+				
+				// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de cookies
+				if (mysqli_num_rows($resultado) == 1) {
+					
+					// Consultamos los datos de ese usuario para crear la sesión
+					$consulta = "SELECT * FROM usuarios WHERE id = '" . $row["id_usuario"] . "'";
+					$resultado = mysqli_query($enlace, $consulta);
+					$row_usuario = mysqli_fetch_array($resultado);
+					
+					// Creamos las variables de sesión, que darán acceso a las partes protegidas del sistema
+					createValidSession($row["id_usuario"], $row_usuario["nombre"]);
+					
+					return true;
+				} else {
+					return false;
+				}
+				
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 
 	/* Función para cerrar la sesión de un usuario que esté logueado */
 	function logout() {
@@ -134,7 +142,7 @@
 	/* Función para crear la sesión de un usuario, y que a partir de ahora tenga acceso a los sitios que corresponda */
 	function createValidSession($id_usuario, $nombre_usuario) {
 		// Creamos el id de la sesión para nuestra aplicación, con el id del usuario logueado, el navegador del usuario y su IP que quedan registrados al crear la sesión
-		$_SESSION["ID"] = $id_usuario . ":" . md5($_SERVER['HTTP_USER_AGENT'] . get_client_ip());
+		$_SESSION["ID"] = $id_usuario . ":" . generateTokenForUserInformation();
 		updateTimeOut();
 		// Guardamos también el nombre del usuario, para mostrarlo en el mensaje de bienvenida
 		$_SESSION["nombre"] = $nombre_usuario;
@@ -148,10 +156,10 @@
 	/* Función para crear la cookie para que la sesión se mantenga abierta */
 	function createCookie($id_usuario) {
 		// Creamos un token aleatorio
-		$cookie = generateToken();
+		$cookie = generateToken() . ":" . generateTokenForUserInformation() . ":" . time();
 		
 		// Almacenamos la cookie con el token generado en el navegador dle usuario
-		setcookie('rememberme', $cookie, time()+60*60*24*365);
+		setcookie('rememberme', $cookie, time() + COOKIE_TIME_ALIVE);
 		
 		// Insertamos el token en la base de datos con el token generado
 		if (!$enlace = conectarDB()) return false;
@@ -162,6 +170,10 @@
 	// Devuelve un token aleatorio para cualquier propósito
 	function generateToken() {
 		return md5(uniqid(rand(), true));
+	}
+	
+	function generateTokenForUserInformation() {
+		return md5($_SERVER['HTTP_USER_AGENT'] . get_client_ip());
 	}
 	
 	/* Borrar la cookie que mantiene la sesión abierta */
