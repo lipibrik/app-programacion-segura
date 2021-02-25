@@ -2,7 +2,7 @@
 	include("config.php");
 	
 	function conectarDB() {
-		return $ENLACE_DB = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_DB);
+		return $ENLACE_DB = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_DB);
 	}
 	
 	function irA($pagina) {
@@ -11,7 +11,7 @@
 	}
 	
 	function mostrarError($codigo_error) {
-		if (in_array($codigo_error, array("1", "2", "3", "4", "5", "6", "7", "8"))) {
+		if (in_array($codigo_error, array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"))) {
 			$codigo_error = limpiar($codigo_error);
 			echo "<div class='alert alert-danger' role='alert'>Error $codigo_error: ";
 			switch ($codigo_error) {
@@ -38,6 +38,15 @@
 				break;
                 case 8:
 					echo "Ya estás logueado";
+				break;
+				case 9:
+					echo "Tu sesión ha caducado";
+				break;
+                case 10:
+					echo "El registro ha fallado";
+				break;
+                case 11:
+					echo "No tienes permiso";
 				break;
 				default:
 					echo "Se ha producido un error desconocido. Contacte con el administrador";
@@ -124,6 +133,26 @@
             die($error);	
         }
         return $rep;
+    }
+    
+    /* Función para obtener la ip del visitante */
+    function get_client_ip() {
+        $ipaddress = '';
+        if (getenv('HTTP_CLIENT_IP'))
+            $ipaddress = getenv('HTTP_CLIENT_IP');
+        else if(getenv('HTTP_X_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+        else if(getenv('HTTP_X_FORWARDED'))
+            $ipaddress = getenv('HTTP_X_FORWARDED');
+        else if(getenv('HTTP_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_FORWARDED_FOR');
+        else if(getenv('HTTP_FORWARDED'))
+           $ipaddress = getenv('HTTP_FORWARDED');
+        else if(getenv('REMOTE_ADDR'))
+            $ipaddress = getenv('REMOTE_ADDR');
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
     }
 
 ?>

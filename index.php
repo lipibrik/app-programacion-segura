@@ -12,11 +12,12 @@
 	
 	// Si se ha introduccido usuario y contraseña en el formulario de login
 	if (isset($_POST["username"]) && isset($_POST["password"])) {
+        $keep_logged_in = isset($_POST["keep_logged_in"]);
 		$username = limpiar($_POST["username"]);
 		$password = limpiar($_POST["password"]);
 		
 		// Lógica de control de acceso
-		if (!login($username, $password)) {
+		if (!login($username, $password, $keep_logged_in)) {
 			irA("index.php?error=1");
 		} else {
 			irA("users.php");
@@ -49,6 +50,7 @@
 					<div class="form-group" id="contrasena-group">
 						<input type="password" class="form-control" placeholder="Contraseña" name="password" required="required"/>
 					</div>
+                    <label><input type="checkbox" id="keep_logged_in" name="keep_logged_in" value="keep_logged_in"> Mantener abierta</label>
 					<button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>  Entrar </button>
 				</form>
 				
@@ -56,7 +58,7 @@
 					¿Has olvidado tu contraseña?<br/><a href="recordar.php">Recordar contraseña</a>.
 				</div>
 				<div class="col-12 forgot">
-					¿Todavía no estás registrado?<br/><a href="recordar.php">Registrarse</a>.
+					¿Todavía no estás registrado?<br/><a href="registrar.php">Registrarse</a>.
 				</div>
 				
 				<?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
