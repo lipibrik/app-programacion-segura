@@ -58,7 +58,7 @@
 					¿Has olvidado tu contraseña?<br/><a href="recordar.php">Recordar contraseña</a>.
 				</div>
 				<div class="col-12 forgot">
-					¿Todavía no estás registrado?<br/><a href="recordar.php">Registrarse</a>.
+					¿Todavía no estás registrado?<br/><a href="registrar.php">Registrarse</a>.
 				</div>
 				
 				<?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>

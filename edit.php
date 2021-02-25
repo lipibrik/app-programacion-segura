@@ -7,6 +7,7 @@
 		irA("index.php?error=2");
 	}
 	
+
 	// Intentamos la conexión con la base de datos, si falla, volvemos al index
 	if (!$enlace = conectarDB()) {
 		irA("users.php?error=yes");
@@ -54,6 +55,10 @@
 	if (!isset($_GET["id"])) {
 		irA("users.php?error=4");
 	}
+
+    if (!isProfesor() && $_GET["id"] != $_SESSION["id_usuario"]) {
+        irA("users.php?error=11");
+    }
 	
 	// En otro caso...
 	$id = limpiar($_GET["id"]);

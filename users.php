@@ -22,10 +22,14 @@
 	
 	// Si se ha hecho clic en borrar alguno de los usuarios
 	if (isset($_GET["borrar"])) {
-		$id_borrar = limpiar($_GET["borrar"]);
+        if (isProfesor()) {
+            $id_borrar = limpiar($_GET["borrar"]);
 		
-		$consulta = "DELETE FROM usuarios WHERE id = '$id_borrar'";
-		$resultado = mysqli_query($enlace, $consulta);
+            $consulta = "DELETE FROM usuarios WHERE id = '$id_borrar'";
+            $resultado = mysqli_query($enlace, $consulta);
+        } else {
+            irA("users.php?error=11");
+        }
 	}
 ?>
 	
@@ -74,8 +78,19 @@
 									<td><?php echo $row["telefono"]; ?></td>
 									<td><?php echo $tipos_de_usuarios[$row["tipo_usuario"]]; ?></td>
 									<td>
-										<a href="edit.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-edit"></i></a> |
-										<a href="users.php?borrar=<?php echo $row["id"]; ?>"><i class="fas fa-user-times"></i></a>|
+                                        <?php
+                                            if (isProfesor()) {
+                                        ?>
+                                              <a href="edit.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-edit"></i></a> |
+										      <a href="users.php?borrar=<?php echo $row["id"]; ?>"><i class="fas fa-user-times"></i></a>|
+                                        <?php
+                                            } 
+                                            if (isAlumno() && $row["id"] == $_SESSION["id_usuario"]) {
+                                        ?>
+                                                <a href="edit.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-edit"></i></a> |
+                                        <?php
+                                            }
+                                        ?>										
 										<a href="ver.php?id=<?php echo $row["id"]; ?>"><i class="fas fa-eye"></i></a>
 									</td>
 								</tr>

@@ -22,7 +22,7 @@
 		if (mysqli_num_rows($resultado) == 1) {
 			
 			// Creamos las variables de sesión, que darán acceso a las partes protegidas del sistema
-			createValidSession($row["id"], $row["nombre"]);
+			createValidSession($row["id"], $row["nombre"], $row["tipo_usuario"]);
 			
 			// Si se ha indicado que se mantenga la sesión abierta, creamos la cookie correspondiente
 			if ($keep_logged_in) {
@@ -36,6 +36,25 @@
 			return false;
 		}
 	}
+
+    function registrarse($username, $password, $nombre, $apellidos, $telefono) {
+        $username = limpiar($username);
+        $nombre = limpiar($nombre);
+        $apellidos = limpiar($apellidos);
+        $telefono = limpiar($telefono);
+        $password = limpiar($password);
+        
+        if (!$enlace = conectarDB()) return false;
+		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, contrasena, tipo_usuario) VALUES ('$nombre', '$apellidos', '$username', '$telefono', '$password', 0)";
+		$resultado = mysqli_query($enlace, $consulta);
+		
+		// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de usuarios con ese usuario y contraseña
+		if (mysqli_affected_rows($enlace) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 	
 	/* Función para comprobar si un usuario está logueado, y tiene permiso para acceder */
 	/* Un usuario estará correctamente logueado si tiene una sesión activa o tiene una cookie válida */
@@ -140,12 +159,14 @@
 	}
 	
 	/* Función para crear la sesión de un usuario, y que a partir de ahora tenga acceso a los sitios que corresponda */
-	function createValidSession($id_usuario, $nombre_usuario) {
+	function createValidSession($id_usuario, $nombre_usuario, $tipo_usuario) {
 		// Creamos el id de la sesión para nuestra aplicación, con el id del usuario logueado, el navegador del usuario y su IP que quedan registrados al crear la sesión
 		$_SESSION["ID"] = $id_usuario . ":" . generateTokenForUserInformation();
 		updateTimeOut();
+        $_SESSION["id_usuario"] = $id_usuario;
 		// Guardamos también el nombre del usuario, para mostrarlo en el mensaje de bienvenida
 		$_SESSION["nombre"] = $nombre_usuario;
+        $_SESSION["tipo_usuario"] = $tipo_usuario;
 	}
 		
 	// Función para actualizar el temporizador que nos dirá cuándo fue la última vez que la sesión tuvo actividad
@@ -202,8 +223,16 @@
 	function showHello() {
 		if (isset($_SESSION["nombre"]) && isset($_SESSION["ID"])) {
 			$id_session = explode(":", $_SESSION["ID"]);
-			echo "Hola " . $_SESSION["nombre"] . ", <a href='index.php?logout=yes'>Cerrar sesión</a>";
+			echo "Hola " . $_SESSION["nombre"] . "(" . $_SESSION["tipo_usuario"] . "), <a href='index.php?logout=yes'>Cerrar sesión</a>";
 		}
 	}
+
+    function isAlumno() {
+        return $_SESSION["tipo_usuario"] == 0;
+    }
+
+    function isProfesor() {
+        return $_SESSION["tipo_usuario"] == 1;
+    }
 
 ?>

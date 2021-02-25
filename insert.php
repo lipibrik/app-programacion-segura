@@ -6,6 +6,10 @@
 	if (!isLoggedIn()) {
 		irA("index.php?error=2");
 	}
+
+    if (!isProfesor()) {
+        irA("users.php?error=11");
+    }
 	
 	// Si se han introducido los datos en el formulario y se ha dado a guardar
 	if (isset($_POST["nombre"]) && isset($_POST["apellidos"]) && isset($_POST["email"]) && isset($_POST["telefono"]) && isset($_POST["tipo_usuario"]) && isset($_POST["password"])) {
