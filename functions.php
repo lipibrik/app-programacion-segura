@@ -71,7 +71,7 @@
 		}
 	}
 	
-	function comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password) {
+	function comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario) {
 		if (strlen($nombre) > 25 || strlen($apellidos) > 50 || strlen($email) > 50 || strlen($telefono) > 20) {
 			return false;
 		} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

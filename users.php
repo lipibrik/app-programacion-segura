@@ -35,14 +35,14 @@
 	
 </head>
 <body>
-	<?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
-	<?php if (isset($_GET["saved"])) mostrarMensaje($_GET["saved"]); ?>
 	<div class="container">
 	<div class="mx-auto col-sm-8 main-section" id="myTab" role="tablist">
 		
 		<div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">	
 			<div class="card">
 				<div class="card-header">
+					<?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
+					<?php if (isset($_GET["saved"])) mostrarMensaje($_GET["saved"]); ?>
 					<?php 
 						// Mostrar mensaje de saludo y para cerrar sesión
 						showHello(); 
@@ -102,7 +102,13 @@
 					</div>
 
 				</div>
+				 <?php
+                    if (isProfesor()) {
+                ?>
 				<a class="btn btn-primary" href="insert.php">Insertar nuevo</a>
+				<?php
+					}
+				?>
 			</div>
 		</div>
 			

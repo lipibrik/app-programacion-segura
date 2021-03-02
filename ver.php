@@ -80,13 +80,10 @@
 					<div class="form-group row">
 						<label class="col-lg-3 col-form-label form-control-label">Tipo de Usuario</label>
 						<div class="col-lg-9">
-							<input type="number" class="form-control" disabled="disabled" value='<?php echo $row["tipo_usuario"] ?>'/>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="col-lg-3 col-form-label form-control-label">Contraseña</label>
-						<div class="col-lg-9">
-							<input class="form-control" type="password" disabled="disabled" value='<?php echo $row["contrasena"] ?>' >
+							<select class="form-control" name="tipo_usuario" disabled="disabled" >
+								<option value="0" <?php if ($row["tipo_usuario"] == 0) echo "selected='selected'"; ?>>Alumno</option>
+								<option value="1" <?php if ($row["tipo_usuario"] == 1) echo "selected='selected'"; ?>>Profesor</option>
+							</select>
 						</div>
 					</div>
 					<div class="form-group row">
