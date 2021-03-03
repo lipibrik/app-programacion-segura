@@ -24,7 +24,7 @@
         $email = limpiar($_POST["email"]); 
         $telefono = limpiar($_POST["telefono"]); 
         $tipo_usuario = limpiar($_POST["tipo_usuario"]); 
-        $password = limpiar($_POST["password"]); 
+        $password = generarHash(limpiar($_POST["password"]));
 		if (!comprobarCampos($nombre, $apellidos, $email, $telefono, $tipo_usuario, $password)) {
 			irA("users.php?error=3");
 		}

@@ -12,14 +12,14 @@
 		$usuario = limpiar($usuario);
 		$password = limpiar($password);
 		
-		// Buscamos si existe en la base de datos un usuario con ese usuario y contraseña
+		// Buscamos si existe en la base de datos un usuario con ese usuario
 		if (!$enlace = conectarDB()) return false;
-		$consulta = "SELECT * FROM usuarios WHERE email = '$usuario' AND contrasena = '$password'";
+		$consulta = "SELECT * FROM usuarios WHERE email = '$usuario'";
 		$resultado = mysqli_query($enlace, $consulta);
 		$row = mysqli_fetch_array($resultado);
 		
 		// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de usuarios con ese usuario y contraseña
-		if (mysqli_num_rows($resultado) == 1) {
+		if (mysqli_num_rows($resultado) == 1 && comprobarPassword($password, $row["contrasena"])) {
 			
 			// Creamos las variables de sesión, que darán acceso a las partes protegidas del sistema
 			createValidSession($row["id"], $row["nombre"], $row["tipo_usuario"]);
@@ -42,10 +42,10 @@
         $nombre = limpiar($nombre);
         $apellidos = limpiar($apellidos);
         $telefono = limpiar($telefono);
-        $password = limpiar($password);
+        $password = generarHash(limpiar($password));
         
         if (!$enlace = conectarDB()) return false;
-		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, contrasena, tipo_usuario) VALUES ('$nombre', '$apellidos', '$username', '$telefono', '$password', 0)";
+		$consulta = "INSERT INTO usuarios (nombre, apellidos, email, telefono, contrasena, tipo_usuario, imagen) VALUES ('$nombre', '$apellidos', '$username', '$telefono', '$password', 0, '')";
 		$resultado = mysqli_query($enlace, $consulta);
 		
 		// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de usuarios con ese usuario y contraseña
@@ -54,6 +54,14 @@
         } else {
             return false;
         }
+    }
+    
+    function generarHash($password) {
+	    return hash("md5", $password);
+    }
+    
+    function comprobarPassword($password, $hash) {
+	    return generarHash($password) == $hash;
     }
 	
 	/* Función para comprobar si un usuario está logueado, y tiene permiso para acceder */
