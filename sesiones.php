@@ -37,6 +37,7 @@
 		}
 	}
 
+	/* Función para hacer registrarse en el sistema, se le pasan los datos de un usuario */
     function registrarse($username, $password, $nombre, $apellidos, $telefono) {
         $username = limpiar($username);
         $nombre = limpiar($nombre);
@@ -56,10 +57,12 @@
         }
     }
     
+    // Genera el hash para una contraseña.
     function generarHash($password) {
 	    return hash("md5", $password);
     }
     
+    // Comprueba si una contraseña coincide con su hash
     function comprobarPassword($password, $hash) {
 	    return generarHash($password) == $hash;
     }
