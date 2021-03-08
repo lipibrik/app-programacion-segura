@@ -3,7 +3,7 @@
 		// Datos de acceso a la base de datos
 		define("DB_HOST", "localhost");
 		define("DB_USER", "root");
-		define("DB_PASS", "root");
+		define("DB_PASS", "");
 		define("DB_DB", "usuarios");
 		
 		// Datos de configuración de las sesiones

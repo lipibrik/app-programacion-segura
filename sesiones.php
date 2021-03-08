@@ -20,7 +20,11 @@
 		
 		// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de usuarios con ese usuario y contraseña
 		if (mysqli_num_rows($resultado) == 1 && comprobarPassword($password, $row["contrasena"])) {
-			
+            
+            if (password_needs_rehash($row["contrasena"], PASSWORD_DEFAULT)) {
+                //irA("");
+            }
+            
 			// Creamos las variables de sesión, que darán acceso a las partes protegidas del sistema
 			createValidSession($row["id"], $row["nombre"], $row["tipo_usuario"]);
 			
@@ -28,7 +32,6 @@
 			if ($keep_logged_in) {
 				createCookie($row["id"]);
 			}
-			
 			// Usuario y contraseña correctos, y después de crear la sesión, y la cookie (si corresponde), devolvemos TRUE.
 			return true;
 		} else {
@@ -59,12 +62,12 @@
     
     // Genera el hash para una contraseña.
     function generarHash($password) {
-	    return hash("md5", $password);
+	    return password_hash($password, PASSWORD_DEFAULT);
     }
     
     // Comprueba si una contraseña coincide con su hash
     function comprobarPassword($password, $hash) {
-	    return generarHash($password) == $hash;
+	    $valor = password_verify($password, $hash);
     }
 	
 	/* Función para comprobar si un usuario está logueado, y tiene permiso para acceder */
