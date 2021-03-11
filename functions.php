@@ -1,5 +1,11 @@
 <?php
 	include("config.php");
+
+    if (D00EBUG) {
+        error_reporting(E_ALL);
+    } else {
+        error_reporting(0);
+    }
 	
 	function conectarDB() {
 		return $ENLACE_DB = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_DB);

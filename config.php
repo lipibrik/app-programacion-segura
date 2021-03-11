@@ -12,4 +12,6 @@
 		// Datos de configuración de las cookies
 		define("COOKIE_TIME_ALIVE", 60*60*24*365); // Tiempo cookie válida en segundos
 
+        define("DEBUG", false);
+
 ?>

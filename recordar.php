@@ -1,14 +1,15 @@
 <?php
-	include("conexion.php");
+	include("sesiones.php");
 	
 	if (isset($_POST["username"])) {
-		$username = $_POST["username"]; 
+		$username = limpiar($_POST["username"]); 
 		
-		// Lógica de control de acceso
-		if (!login($username, $password)) {
-			header("Location: recordar.php?enviado=yes");
-			exit;
-		}
+		// Lógica de recuperación de contraseña
+		if (recuperar($username)) {
+            irA("index.php");
+        } else {
+            irA("index.php?error=1");
+        }
 		
 	}
 ?>
@@ -30,7 +31,7 @@
 					<img src="static/img/user.png" th:src="@{/img/user.png}"/>
 				</div>
 				
-				<form class="col-12" action="index.php" method="post">
+				<form class="col-12" action="recordar.php" method="post">
 					<div class="form-group" id="user-group">
 						<input type="text" class="form-control" placeholder="Nombre de usuario" name="username"/>
 					</div>
@@ -41,12 +42,7 @@
 					<a href="index.php">Entrar</a>
 				</div>
 				
-				<?php if (isset($_GET["error"]) && $_GET["error"] == 1) { ?>
-					<div th:if="${param.error}" class="alert alert-danger" role="alert">Se ha producido un error</div>
-				<?php } ?>
-				<?php if (isset($_GET["enviado"])) { ?>
-					<div th:if="${param.error}" class="alert alert-success" role="alert">Si tu usuario existe, te llegará un correo con instrucciones</div>
-				<?php } ?>
+                <?php if (isset($_GET["error"])) mostrarError($_GET["error"]); ?>
 				
 			</div>
 		</div>

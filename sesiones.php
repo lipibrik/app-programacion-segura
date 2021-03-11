@@ -20,9 +20,10 @@
 		
 		// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de usuarios con ese usuario y contraseña
 		if (mysqli_num_rows($resultado) == 1 && comprobarPassword($password, $row["contrasena"])) {
-            
             if (password_needs_rehash($row["contrasena"], PASSWORD_DEFAULT)) {
-                //irA("");
+                $nuevoHash = generarHash($password);
+                $consulta2 = "UPDATE usuarios SET contrasena = '$nuevoHash' WHERE email = '$usuario'";
+		          mysqli_query($enlace, $consulta);
             }
             
 			// Creamos las variables de sesión, que darán acceso a las partes protegidas del sistema
@@ -67,7 +68,7 @@
     
     // Comprueba si una contraseña coincide con su hash
     function comprobarPassword($password, $hash) {
-	    $valor = password_verify($password, $hash);
+	    return password_verify($password, $hash);
     }
 	
 	/* Función para comprobar si un usuario está logueado, y tiene permiso para acceder */
@@ -247,6 +248,33 @@
 
     function isProfesor() {
         return $_SESSION["tipo_usuario"] == 1;
+    }
+
+    function recuperar($email) {
+        if (!$enlace = conectarDB()) return false;
+		$consulta = "SELECT * FROM usuarios WHERE email = '$email'";
+		$resultado = mysqli_query($enlace, $consulta);
+		$row = mysqli_fetch_array($resultado);
+		
+		// Sólo será válido si se ha encontrado uno, y sólo uno, en la tabla de usuarios con ese usuario y contraseña
+		if (mysqli_num_rows($resultado) == 1) {
+            $token = generateToken();
+            $consulta = "UPDATE usuarios SET token = '$token' WHERE email = '$email'";
+            $resultado = mysqli_query($enlace, $consulta);
+            ?>
+            Hola, se ha solicitado un cambio de contraseña. Si has sido tú, entra en este enlace:
+        
+            <a href="password_reset.php?token=<?php echo $token; ?>">Cambiar contraseña</a>
+
+            Si no has sido tú, ignora este correo.
+
+            <?php
+            exit;
+            return true;
+        } else {
+            return false;
+        }
+        
     }
 
 ?>

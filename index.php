@@ -1,4 +1,5 @@
 <?php
+asdfasdf
 	include("sesiones.php");
 	
 	// Se ha hecho clic en "Cerrar Sesión"
