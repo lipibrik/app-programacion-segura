@@ -1,6 +1,15 @@
 <?php
 	session_start();
-	include_once("functions.php");
+    include_once("functions.php");
+
+    if (!$enlace = conectarDB()) return false;
+    $consulta = "SELECT * FROM ips_bloqueadas WHERE ip = '" . get_client_ip() . "'";
+    $resultado = mysqli_query($enlace, $consulta);
+    if (mysqli_num_rows($resultado) >= 1) {
+        exit("Tu IP está bloqueada");
+    }
+
+	
 
 	/* Función para hacer login en el sistema, se le pasa un usuario y una contraseña, e indicamos si queremos que la sesión se mantenga abierta en el tiempo */
 	// Devuelve verdadero si el login es correcto (existe un usuario en la base de datos con ese usuario y contraseña, y falso en caso contrario

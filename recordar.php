@@ -1,15 +1,29 @@
 <?php
 	include("sesiones.php");
+    require_once("recaptcha.php");
 	
 	if (isset($_POST["username"])) {
-		$username = limpiar($_POST["username"]); 
-		
-		// Lógica de recuperación de contraseña
-		if (recuperar($username)) {
-            irA("index.php");
-        } else {
-            irA("index.php?error=1");
+		$username = limpiar($_POST["username"]);
+        
+        if (!isset($_POST["g-recaptcha-response"]) ||       empty($_POST["g-recaptcha-response"])) {
+            irA("recordar.php?error=12");
         }
+        
+        $token = $_POST["g-recaptcha-response"];
+        $verificado = verificarToken($token, CLAVE_SECRETA);
+		
+        if ($verificado) {
+           // Lógica de recuperación de contraseña
+            if (recuperar($username)) {
+                irA("index.php");
+            } else {
+                irA("index.php?error=1");
+            }   
+        } else {
+            irA("recordar.php?error=12");
+        }
+        
+		
 		
 	}
 ?>
@@ -17,7 +31,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Recordar Contraseña</title>
-
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <?php
 	include("head.php");
 ?>
@@ -35,6 +49,10 @@
 					<div class="form-group" id="user-group">
 						<input type="text" class="form-control" placeholder="Nombre de usuario" name="username"/>
 					</div>
+                    <div
+                        class="g-recaptcha"
+                        data-sitekey="6LcI2YEaAAAAAGb1b9r0bCPNWzrxffPdbokD_2jb">
+                    </div>
 					<button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>  Recordar </button>
 				</form>
 				

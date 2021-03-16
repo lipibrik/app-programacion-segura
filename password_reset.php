@@ -16,18 +16,42 @@
     }
 
 	if (isset($_POST["password"])) {
-		$password = generarHash(limpiar($_POST["password"]));
-        $email = $row["email"];
-		$consulta = "UPDATE usuarios SET contrasena = '$password' WHERE email = '$email'";
-        $resultado = mysqli_query($enlace, $consulta);
-        irA("index.php");
+        
+        $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify'; 
+        $recaptcha_secret = '6LfR5oEaAAAAAJUJqudaIeWIWlA-kLhUF_kU0ZoZ'; 
+        $recaptcha_response = $_POST['recaptcha_response']; 
+        $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response); 
+        $recaptcha = json_decode($recaptcha); 
+
+        if($recaptcha->score >= 0.7){
+            // OK. ERES HUMANO, EJECUTA ESTE CÓDIGO
+            $password = generarHash(limpiar($_POST["password"]));
+            $email = $row["email"];
+            $consulta = "UPDATE usuarios SET contrasena = '$password' WHERE email = '$email'";
+            $resultado = mysqli_query($enlace, $consulta);
+            //irA("index.php");
+        }else{
+            // KO. ERES ROBOT, EJECUTA ESTE CÓDIGO
+            irA("index.php?error=12");
+        }
+        
+		
 	}
 ?>
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Recordar Contraseña</title>
-
+    <script src='https://www.google.com/recaptcha/api.js?render=6LfR5oEaAAAAAHqgK1oHmVTIUjXdHJyEQCvDf0fL'> 
+    </script>
+    <script>
+    grecaptcha.ready(function() {
+    grecaptcha.execute('6LfR5oEaAAAAAHqgK1oHmVTIUjXdHJyEQCvDf0fL', {action: 'formulario'})
+    .then(function(token) {
+    var recaptchaResponse = document.getElementById('recaptchaResponse');
+    recaptchaResponse.value = token;
+    });});
+    </script>
 <?php
 	include("head.php");
 ?>
@@ -45,6 +69,7 @@
 					<div class="form-group" id="user-group">
 						<input type="password" class="form-control" placeholder="Nueva contraseña" name="password"/>
 					</div>
+                    <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
 					<button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>  Guardar</button>
 				</form>
 				

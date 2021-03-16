@@ -1,7 +1,7 @@
 <?php
 	include("config.php");
 
-    if (D00EBUG) {
+    if (DEBUG) {
         error_reporting(E_ALL);
     } else {
         error_reporting(0);
@@ -17,7 +17,7 @@
 	}
 	
 	function mostrarError($codigo_error) {
-		if (in_array($codigo_error, array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"))) {
+		if (in_array($codigo_error, array("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"))) {
 			$codigo_error = limpiar($codigo_error);
 			echo "<div class='alert alert-danger' role='alert'>Error $codigo_error: ";
 			switch ($codigo_error) {
@@ -53,6 +53,9 @@
 				break;
                 case 11:
 					echo "No tienes permiso";
+				break;
+                case 12:
+					echo "La validación Captcha ha fallado";
 				break;
 				default:
 					echo "Se ha producido un error desconocido. Contacte con el administrador";

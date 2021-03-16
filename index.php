@@ -1,7 +1,5 @@
 <?php
-asdfasdf
 	include("sesiones.php");
-	
 	// Se ha hecho clic en "Cerrar Sesión"
 	if (isset($_GET["logout"])) {
 		logout();
@@ -12,10 +10,27 @@ asdfasdf
 	}
 	
 	// Si se ha introduccido usuario y contraseña en el formulario de login
+var_dump(get_client_ip());
 	if (isset($_POST["username"]) && isset($_POST["password"])) {
+        if (!isset($_SESSION["cont"])) {
+            $_SESSION["cont"] = 1;
+        } else {
+            $_SESSION["cont"]++;
+        }
+        if ($_SESSION["cont"] > 5) {
+            $ip = get_client_ip();
+            if (!$enlace = conectarDB()) return false;
+            $consulta = "INSERT INTO ips_bloqueadas (ip) VALUES ('$ip')";
+            mysqli_query($enlace, $consulta);
+            exit;
+        }
         $keep_logged_in = isset($_POST["keep_logged_in"]);
 		$username = limpiar($_POST["username"]);
 		$password = limpiar($_POST["password"]);
+        
+        if (isset($_POST["data"]) && $_POST["data"] != "") {
+           exit; 
+        }
 		
 		// Lógica de control de acceso
 		if (!login($username, $password, $keep_logged_in)) {
@@ -51,6 +66,7 @@ asdfasdf
 					<div class="form-group" id="contrasena-group">
 						<input type="password" class="form-control" placeholder="Contraseña" name="password" required="required"/>
 					</div>
+                    <input id="data" type="text" name="data" value="" />
                     <label><input type="checkbox" id="keep_logged_in" name="keep_logged_in" value="keep_logged_in"> Mantener abierta</label>
 					<button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>  Entrar </button>
 				</form>
