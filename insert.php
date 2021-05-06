@@ -117,6 +117,7 @@
 							<input class="form-control" type="password" name="password" placeholder="Contraseña segura" value='' required="required" >
 						</div>
 					</div>
+					HOla
 					<div class="form-group row">
 						<div class="col-lg-12 text-center">
 							<a href='users.php'>Volver</a>
